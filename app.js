@@ -4,6 +4,14 @@ var RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
 var $ = function(s,c){return (c||document).querySelector(s)};
 var $$ = function(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s))};
 
+/* vercel web analytics, production host only */
+if(/\.vercel\.app$/.test(location.hostname)){
+  var va = document.createElement('script');
+  va.defer = true;
+  va.src = '/_vercel/insights/script.js';
+  document.head.appendChild(va);
+}
+
 /* ---------- counter util ---------- */
 function count(el, to, opts){
   opts = opts||{};
