@@ -553,7 +553,8 @@ body.locked{overflow:hidden}
 @media (max-width:860px){
   .hm-stage{grid-template-columns:1fr 20px}
   .hm-rail{display:none}
-  .hm-note{position:static;max-width:none;margin:4px 0;transform:none}
+  .hm-note{position:static;grid-column:1 / -1;max-width:none;margin:4px 14px;transform:none}
+  .hm-note:last-of-type{margin-bottom:14px}
 }
 @media (max-width:560px){
   .hm-main{padding:14px 14px}

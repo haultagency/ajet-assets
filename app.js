@@ -506,13 +506,47 @@ function selectLang(i){
 
 /* ---------- heatmap showcase ---------- */
 var hmCard = $('#hmCard'), hmToggle = $('#hmToggle');
+function positionHeat(){
+  var stage = $('#hmStage'), svgH = $('#hmHeat');
+  if(!stage || !svgH) return;
+  var sr = stage.getBoundingClientRect();
+  if(sr.width < 10) return;
+  var prices = $$('.hm-price', stage);
+  var tms = $$('.hm-row .tms', stage);
+  var anchors = [
+    {el: prices[0], sx: 1.4, sy: 2.6},
+    {el: prices[1], sx: 1.2, sy: 2.2},
+    {el: prices[2], sx: 1.1, sy: 2.0},
+    {el: tms[0], sx: .75, sy: 2.2},
+    {el: $('.hm-fam', stage), sx: .32, sy: 1.6},
+    {el: $('.hm-search .btn-mock', stage), sx: 2.2, sy: 2.4},
+    {el: tms[2], sx: .6, sy: 1.8}
+  ];
+  var cap = sr.width * .22;
+  $$('ellipse', svgH).forEach(function(e, i){
+    var a = anchors[i];
+    if(!a || !a.el) return;
+    var r = a.el.getBoundingClientRect();
+    e.setAttribute('cx', (r.left + r.width/2 - sr.left).toFixed(1));
+    e.setAttribute('cy', (r.top + r.height/2 - sr.top).toFixed(1));
+    e.setAttribute('rx', Math.max(30, Math.min(cap, r.width/2 * a.sx)).toFixed(1));
+    e.setAttribute('ry', Math.max(24, Math.min(cap, r.height/2 * a.sy)).toFixed(1));
+  });
+}
 hmToggle.addEventListener('click', function(){
+  positionHeat();
   var on = hmCard.classList.toggle('hm-on');
   hmToggle.setAttribute('aria-pressed', String(on));
   hmToggle.textContent = on ? 'Hide heatmap' : 'Show heatmap';
 });
+var hmResizeT;
+addEventListener('resize', function(){
+  clearTimeout(hmResizeT);
+  hmResizeT = setTimeout(positionHeat, 150);
+});
 function runHeatmap(){
-  setTimeout(function(){ hmCard.classList.add('hm-on'); }, RM?0:500);
+  positionHeat();
+  setTimeout(function(){ positionHeat(); hmCard.classList.add('hm-on'); }, RM?0:500);
 }
 
 /* ---------- dashboard ---------- */
@@ -797,6 +831,7 @@ addEventListener('beforeprint', function(){
   });
   if(!dashBuilt) runDash();
   $('#dash').classList.add('on');
+  positionHeat();
   hmCard.classList.add('hm-on');
   $$('#checklist li').forEach(function(li){ li.classList.add('on'); });
   $('#kitBody').style.maxHeight = 'none';
